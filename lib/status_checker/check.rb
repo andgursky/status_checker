@@ -1,26 +1,35 @@
+require "status_checker/timer"
 require "net/https"
 require "uri"
 
 module StatusChecker
   class Check
-    def initialize(email="andgursky@gmail.com", per=60,
+    def initialize(email="andgursky@gmail.com", per=10,
                    domain=["https://pokupon.ua", "https://partner.pokupon.ua"])
       # initialize all instanse variables
       @email    = email
-      @period   = per
+      @delay    = per
       @domain   = domain
+      @timer    = StatusChecker::Timer.new(@delay)
     end
 
     def start
       # run checker loop
-      @domain.each do |url|
-        http_status = check_http_status_of(url)
-        email.send(http_status) unless http_status.code == 200
+      threads = []
+      @timer.start do
+        @domain.each do |dom|
+          threads << Thread.new(dom) do |url|
+            response = check_http_status_of(url)
+            email.send(response) unless response.code == 200
+          end
+        end
+        threads.each { |thr| thr.join }
       end
     end
 
     def stop
       # stop checker loop
+      @timer.stop
     end
 
     private
