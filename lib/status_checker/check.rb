@@ -5,7 +5,7 @@ require "uri"
 
 module StatusChecker
   class Check
-    def initialize(email=["andgursky@gmail.com"], per=10,
+    def initialize(email=["technical_root@mail.ru"], per=10,
                    domain=["https://ukr.net", "https://yandex.ru"])
       # initialize all instanse variables
       @email    = email

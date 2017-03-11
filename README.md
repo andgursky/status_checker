@@ -2,7 +2,7 @@
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/status_checker`. To experiment with that code, run `bin/console` for an interactive prompt.
 
-TODO: Delete this and the text above, and describe your gem
+StatusChecker gem is allows you to check http status of any web site and get the alert message to your e-mail box if it's response code not 200.
 
 ## Installation
 
@@ -22,7 +22,19 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+In console:
+
+    $ bundle exec bin/console
+    $ checker = StatusChecker::Check.new(["youremail@mail.com"], 60, ["https://site1.com", "http://site2.com"])
+
+All arguments has default values, but if you want to change them, go ahead :)
+
+    $ checker.start
+
+This method runs loop with checking response codes process. You'll receive message to youremail@mail.com if status code of any site you provided (site1 or site2) will be different from 200.
+If you want, you can stop the program:
+
+    $ checker.stop
 
 ## Development
 
