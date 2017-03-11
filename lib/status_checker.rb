@@ -1,5 +1,3 @@
 require "status_checker/version"
+require "status_checker/check"
 
-module StatusChecker
-  # Your code goes here...
-end
