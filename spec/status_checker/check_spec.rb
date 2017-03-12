@@ -1,10 +1,13 @@
 require 'spec_helper'
-require 'pry'
 
 RSpec.describe StatusChecker::Check do
 
   def fake_response
     net_http_resp = Net::HTTPResponse.new(1.0, 301, "Moved Permanently")
+  end
+
+  def url
+    "http://example.com"
   end
 
   it "starts timer when we start to check" do
@@ -14,20 +17,19 @@ RSpec.describe StatusChecker::Check do
 
   context "when status code not 200 and it's not recurrent code" do
 
-    let(:email) { StatusChecker::Email.new(["fake@email.com"]) }
-
     before do
       allow(subject).to receive(:recurrent_code?).and_return(false)
+      allow(subject).to receive(:check_http_status_of).and_return(fake_response)
     end
 
     it "calls email send" do
-      expect(email).to receive(:send)
-      subject.check_response_code(fake_response, subject.send(:recurrent_code?))
+      expect(subject).to receive(:send_email)
+      subject.check_url(url)
     end
 
     it "adds status code to stack of the responses" do
       expect(subject).to receive(:add_code_to_resp_stack)
-      subject.check_response_code(fake_response, subject.send(:recurrent_code?))
+      subject.check_url(url)
     end
   end
 
