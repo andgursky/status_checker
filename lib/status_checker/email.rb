@@ -4,6 +4,7 @@ require 'pry'
 module StatusChecker
   class Email
     def initialize(receivers)
+      raise ArgumentError, "receivers can't be empty" if receivers.empty?
       @receivers = receivers
       @addres = 'smtp.mail.ru'
       @port = 465
