@@ -32,9 +32,17 @@ All arguments has default values, but if you want to change them, go ahead :)
     $ checker.start
 
 This method runs loop with checking response codes process. You'll receive message to youremail@mail.com if status code of any site you provided (site1 or site2) will be different from 200.
-If you want, you can stop the program:
+If you want, you can stop the loop:
 
     $ checker.stop
+
+By the way, you dont have to run loop for checking web site every time. You can check it at onse:
+
+    $ checker.check_url("https://example.com")
+
+and it returns an array with url, response code and response message:
+
+    $ ["https://example.com", "200", "OK"]
 
 ## Development
 
