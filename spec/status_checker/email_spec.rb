@@ -2,14 +2,6 @@ require 'spec_helper'
 
 RSpec.describe StatusChecker::Email do
 
-  def fake_response
-    net_http_resp = Net::HTTPResponse.new(1.0, 301, "Moved Permanently")
-  end
-
-  def url
-    "http://example.com"
-  end
-
   subject do
     StatusChecker::Email.new(["technical_root@mail.ru"])
   end

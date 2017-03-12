@@ -2,14 +2,6 @@ require 'spec_helper'
 
 RSpec.describe StatusChecker::Check do
 
-  def fake_response
-    net_http_resp = Net::HTTPResponse.new(1.0, 301, "Moved Permanently")
-  end
-
-  def url
-    "http://example.com"
-  end
-
   it "starts timer when we start to check" do
     expect(subject.instance_variable_get '@timer').to receive(:start)
     subject.start
