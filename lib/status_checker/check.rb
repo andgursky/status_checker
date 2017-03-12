@@ -5,9 +5,11 @@ require "uri"
 
 module StatusChecker
   class Check
+
     def initialize(email=["technical_root@mail.ru"], per=10,
                    domain=["https://ukr.net", "https://yandex.ru"])
       # initialize all instanse variables
+      extend MonitorMixin
       @email    = email
       @delay    = per
       @domain   = domain
@@ -21,11 +23,7 @@ module StatusChecker
       @timer.start do
         @domain.each do |dom|
           threads << Thread.new(dom) do |url|
-            response = check_http_status_of url
-            if response.code != 200.to_s && !recurrent_code?(url, response.code)
-              StatusChecker::Email.new(@email).send(url, response)
-              add_code_to_resp_stack(response.code, url)
-            end
+            check_url(url)
           end
         end
         threads.each { |thr| thr.join }
@@ -35,6 +33,15 @@ module StatusChecker
     def stop
       # stop checker loop
       @timer.stop
+    end
+
+    def check_url(url)
+      response = check_http_status_of(url)
+      if response.code != 200.to_s && !recurrent_code?(url, response.code)
+        add_code_to_resp_stack(response.code, url)
+        send_email(url, response)
+      end
+      [url, response.code, response.message]
     end
 
     private
@@ -48,14 +55,22 @@ module StatusChecker
     end
 
     def recurrent_code?(url, resp_code)
-      @resp_stack.each_pair do |key, val|
-        return true if key==resp_code && val==url
+      synchronize do
+        @resp_stack.each_pair do |key, val|
+          return true if key==resp_code && val==url
+        end
       end
       return false
     end
 
     def add_code_to_resp_stack(code, url)
-      @resp_stack.merge!("#{code}" => url)
+      synchronize do
+        @resp_stack.merge!("#{code}" => url)
+      end
+    end
+
+    def send_email(url, resp)
+      StatusChecker::Email.new(@email).send(url, resp)
     end
   end
 end
