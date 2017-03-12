@@ -14,8 +14,8 @@ module StatusChecker
         t = Time.now
         while run?
           t += @delay
-          (sleep(t - Time.now) rescue nil) and
-            handler.call rescue nil
+          (handler.call rescue nil) and
+            sleep(t - Time.now) rescue nil
         end
       end
     end
